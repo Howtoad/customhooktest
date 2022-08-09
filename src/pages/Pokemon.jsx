@@ -1,16 +1,28 @@
-import { useEffect } from "react";
-import { useState } from "react";
-
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
+import { useParams } from "react-router-dom";
+import useFetch from "../hooks/useFetch";
+import Types from "../Types";
 const Pokemon = () => {
-  const [pokemon, setPokemon] = useState({});
-  useEffect(function () {
-    fetch("https://pokeapi.co/api/v2/pokemon/1")
-      .then((res) => res.json())
-      .then((data) => setPokemon(data));
-  });
+  const styles = {
+    name: css`
+      text-transform: capitalize;
+    `,
+  };
+  const { name } = useParams();
+  const { data, isLoading } = useFetch(
+    "https://pokeapi.co/api/v2/pokemon/" + name
+  );
   return (
     <div>
-      <h1>Pokemon</h1>
+      {isLoading ? (
+        <p>Loading..</p>
+      ) : (
+        <>
+          <h1 css={styles.name}>{data.name}</h1>
+          <Types types={data.types} />
+        </>
+      )}
     </div>
   );
 };
